@@ -31,7 +31,8 @@ These instructions are tested on Ubuntu 18.04 and 20.04. For other distros/versi
   - Note: On Fedora, the required package for OpenSSL is called openssl-devel.
 - Download the OBS Studio source code somewhere: 
   - `cd ~/Downloads`
-  - `git clone https://github.com/obsproject/obs-studio.git`
+  - `git clone -b 27.2.1 https://github.com/obsproject/obs-studio.git`
+  - Note: This command specifically gets version 27.2.1 of obs-studio because the libobs import mechanism for plugins changed after that version. In the future, this plugin will be updated to use the new method.
 - Download this plugin source code:
   - `git clone https://github.com/dougg3/obs-ios-camera-source.git`
 - Build the plugin:

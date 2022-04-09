@@ -13,7 +13,7 @@ To use this you use the [accompanying iOS app](https://obs.camera/) to begin str
 
 ### Ubuntu 20.04 (and possibly other distros) and 18.04
 
-Go to the [actions](https://github.com/dougg3/obs-ios-camera-source/actions) section of this repository and click on the latest workflow that finished successfully. Then download the artifact that corresponds to your version. After downloading, place the zip file in your home directory and run:
+Go to the [releases](https://github.com/dougg3/obs-ios-camera-source/releases) section of this repository and download the latest release. After downloading, place the zip file in your home directory and run:
 
 ```
 unzip plugin-ubuntu-*.zip

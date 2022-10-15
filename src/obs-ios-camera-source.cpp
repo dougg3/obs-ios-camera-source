@@ -122,7 +122,7 @@ void IOSCameraInput::deviceManagerDidUpdateDeviceList(
 void IOSCameraInput::deviceManagerDidChangeState(
 	portal::DeviceManager::State state)
 {
-	blog(LOG_INFO, "deviceManagerDidChangeState %i", state);
+	blog(LOG_INFO, "deviceManagerDidChangeState %i", static_cast<int>(state));
 	std::cout << "DeviceManager::didChangeState: " << state << std::endl;
 }
 

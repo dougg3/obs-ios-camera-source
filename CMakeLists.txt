@@ -1,10 +1,7 @@
 cmake_minimum_required(VERSION 3.2)
 project(obs-ios-camera-source)
 
-set(CMAKE_PREFIX_PATH "${QTDIR}")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
 set(CMAKE_CXX_STANDARD 17)
 
 include(external/FindLibObs.cmake)

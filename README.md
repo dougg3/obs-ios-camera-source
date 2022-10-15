@@ -11,7 +11,7 @@ To use this you use the [accompanying iOS app](https://obs.camera/) to begin str
 
 ## Downloads
 
-### Ubuntu 20.04 (and possibly other distros) and 18.04  
+### Ubuntu 22.04 (and possibly other distros), 20.04, and 18.04  
 (Confirmed working on Manjaro as of 06 Oct 2022 by [@seffyroff](https://github.com/seffyroff))
 
 Go to the [releases](https://github.com/dougg3/obs-ios-camera-source/releases) section of this repository and download the latest release. After downloading, place the zip file in your home directory and run:
@@ -24,23 +24,20 @@ You must have the `unzip` package installed for this to work: `sudo apt install 
 
 ## Building
 
-These instructions are tested on Ubuntu 18.04 and 20.04. For other distros/versions, YMMV.
+These instructions are tested on Ubuntu 22.04, 20.04, and 18.04. For other distros/versions, YMMV.
 
 - Make sure you have the universe and multiverse repositories enabled so you will have access to FFmpeg.
 - Install OBS Studio using the [instructions on the OBS wiki](https://obsproject.com/wiki/install-instructions#ubuntu-installation).
-- Install prerequisites: `sudo apt install build-essential git cmake libavcodec-dev libssl-dev`
+  - This should install the headers and CMake files necessary for compiling against libobs. It does on Ubuntu; I can't speak for other distros.
+- Install prerequisites: `sudo apt install build-essential git cmake libavcodec-dev libssl-dev pkg-config`
   - Note: On Fedora, the required package for OpenSSL is called openssl-devel.
-- Download the OBS Studio source code somewhere: 
-  - `cd ~/Downloads`
-  - `git clone -b 27.2.1 https://github.com/obsproject/obs-studio.git`
-  - Note: This command specifically gets version 27.2.1 of obs-studio because the libobs import mechanism for plugins changed after that version. In the future, this plugin will be updated to use the new method.
 - Download this plugin source code:
   - `git clone https://github.com/dougg3/obs-ios-camera-source.git`
 - Build the plugin:
   - `cd obs-ios-camera-source`
   - `mkdir build`
   - `cd build`
-  - `cmake .. -DLIBOBS_INCLUDE_DIR=~/Downloads/obs-studio/cmake`
+  - `cmake ..`
   - `make -j$(nproc)`
 - Manually install the plugin by copying relevant files into your OBS plugins directory (assuming 64-bit Linux):
   - `mkdir -p ~/.config/obs-studio/plugins/obs-ios-camera-source/data/locale`

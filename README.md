@@ -11,7 +11,8 @@ To use this you use the [accompanying iOS app](https://obs.camera/) to begin str
 
 ## Downloads
 
-### Ubuntu 20.04 (and possibly other distros) and 18.04
+### Ubuntu 20.04 (and possibly other distros) and 18.04  
+(Confirmed working on Manjaro as of 06 Oct 2022 by [@seffyroff](https://github.com/seffyroff))
 
 Go to the [releases](https://github.com/dougg3/obs-ios-camera-source/releases) section of this repository and download the latest release. After downloading, place the zip file in your home directory and run:
 

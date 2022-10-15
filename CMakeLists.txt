@@ -1,5 +1,6 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.11)
 project(obs-ios-camera-source)
+add_library(obs-ios-camera-source MODULE)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 17)
@@ -263,7 +264,7 @@ if(APPLE)
 endif()
 
 # --- Platform-independent build settings ---
-add_library(obs-ios-camera-source MODULE 
+target_sources(obs-ios-camera-source PRIVATE
 	${obs-ios-camera-source_SOURCES}
 	${obs-ios-camera-source_HEADERS})
 

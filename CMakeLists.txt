@@ -5,9 +5,19 @@ add_library(obs-ios-camera-source MODULE)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 17)
 
-include(external/FindLibObs.cmake)
-
-find_package(LibObs REQUIRED)
+# Try to find libobs, either through the old way or the new (after 27.2.1) way.
+# If the new method fails, don't print an error because we also need to try the
+# old way in case this is an older version of libobs (e.g. Ubuntu 18.04)
+find_package(libobs QUIET)
+if (libobs_FOUND)
+	# Found using the new method (OBS 28+)
+	target_link_libraries(obs-ios-camera-source OBS::libobs)
+else()
+	# Try to find it using the old method instead
+	find_package(LibObs REQUIRED)
+	include_directories(${LIBOBS_INCLUDE_DIRS})
+	target_link_libraries(obs-ios-camera-source ${LIBOBS_LIBRARIES})
+endif()
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(LIBAV REQUIRED IMPORTED_TARGET
@@ -284,7 +294,6 @@ endif()
 
 
 target_link_libraries(obs-ios-camera-source 
-	libobs
 	portal
 	${FFMPEG_LIBRARIES}
 )

@@ -1,19 +1,29 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.11)
 project(obs-ios-camera-source)
+add_library(obs-ios-camera-source MODULE)
 
-set(CMAKE_PREFIX_PATH "${QTDIR}")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
 set(CMAKE_CXX_STANDARD 17)
 
-include(external/FindLibObs.cmake)
+# Try to find libobs, either through the old way or the new (after 27.2.1) way.
+# If the new method fails, don't print an error because we also need to try the
+# old way in case this is an older version of libobs (e.g. Ubuntu 18.04)
+find_package(libobs QUIET)
+if (libobs_FOUND)
+	# Found using the new method (OBS 28+)
+	target_link_libraries(obs-ios-camera-source OBS::libobs)
+else()
+	# Try to find it using the old method instead
+	find_package(LibObs REQUIRED)
+	include_directories(${LIBOBS_INCLUDE_DIRS})
+	target_link_libraries(obs-ios-camera-source ${LIBOBS_LIBRARIES})
+endif()
 
-find_package(LibObs REQUIRED)
-
-find_package(FFmpeg REQUIRED COMPONENTS avcodec avutil)
-# find_ffmpeg_library(avcodec)
-# find_ffmpeg_library(avutil)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(LIBAV REQUIRED IMPORTED_TARGET
+	libavcodec
+	libavutil
+)
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
 	set(ARCH 64)
@@ -23,6 +33,10 @@ endif()
 
 if(WIN32)
 	find_library(WS2_32_LIBRARY ws2_32)
+
+	# Provide dirent path hint for the libimobiledevice CMakeLists
+	set(DIRENT_DIR "deps/dirent/")
+	cmake_path(ABSOLUTE_PATH DIRENT_DIR OUTPUT_VARIABLE DIRENT_DIR)
 endif()
 
 # ---- libcnary
@@ -260,12 +274,9 @@ if(APPLE)
 endif()
 
 # --- Platform-independent build settings ---
-add_library(obs-ios-camera-source MODULE 
+target_sources(obs-ios-camera-source PRIVATE
 	${obs-ios-camera-source_SOURCES}
 	${obs-ios-camera-source_HEADERS})
-
-
-#find_package(FFmpeg REQUIRED COMPONENTS avcodec avutil)
 
 include_directories( 
 	"${LIBOBS_INCLUDE_DIR}/../UI/obs-frontend-api"
@@ -283,7 +294,6 @@ endif()
 
 
 target_link_libraries(obs-ios-camera-source 
-	libobs
 	portal
 	${FFMPEG_LIBRARIES}
 )

@@ -164,7 +164,7 @@ bool ffmpeg_decode_audio(struct ffmpeg_decode *decode,
                          struct obs_source_audio *audio,
                          bool *got_output)
 {
-    AVPacket packet = {0};
+    AVPacket *packet;
     int got_frame = false;
     int ret = 0;
 
@@ -172,9 +172,9 @@ bool ffmpeg_decode_audio(struct ffmpeg_decode *decode,
 
     copy_data(decode, data, size);
 
-    av_init_packet(&packet);
-    packet.data = decode->packet_buffer;
-    packet.size = (int)size;
+    packet = av_packet_alloc();
+    packet->data = decode->packet_buffer;
+    packet->size = (int)size;
 
     if (!decode->frame)
     {
@@ -184,7 +184,8 @@ bool ffmpeg_decode_audio(struct ffmpeg_decode *decode,
     }
 
     if (data && size)
-        ret = avcodec_send_packet(decode->decoder, &packet);
+        ret = avcodec_send_packet(decode->decoder, packet);
+    av_packet_free(&packet);
     if (ret == 0)
         ret = avcodec_receive_frame(decode->decoder, decode->frame);
 
@@ -220,7 +221,7 @@ bool ffmpeg_decode_video(struct ffmpeg_decode *decode,
                          struct obs_source_frame *frame,
                          bool *got_output)
 {
-    AVPacket packet = {0};
+    AVPacket *packet;
     int got_frame = false;
     enum video_format new_format;
     int ret;
@@ -229,14 +230,14 @@ bool ffmpeg_decode_video(struct ffmpeg_decode *decode,
 
     copy_data(decode, data, size);
 
-    av_init_packet(&packet);
-    packet.data = decode->packet_buffer;
-    packet.size = (int)size;
-    packet.pts = *ts;
+    packet = av_packet_alloc();
+    packet->data = decode->packet_buffer;
+    packet->size = (int)size;
+    packet->pts = *ts;
 
     if (decode->codec->id == AV_CODEC_ID_H264 && obs_avc_keyframe(data, size))
     {
-        packet.flags |= AV_PKT_FLAG_KEY;
+        packet->flags |= AV_PKT_FLAG_KEY;
     }
 
     if (!decode->frame)
@@ -246,7 +247,8 @@ bool ffmpeg_decode_video(struct ffmpeg_decode *decode,
             return false;
     }
 
-    ret = avcodec_send_packet(decode->decoder, &packet);
+    ret = avcodec_send_packet(decode->decoder, packet);
+    av_packet_free(&packet);
     if (ret == 0)
         ret = avcodec_receive_frame(decode->decoder, decode->frame);
 

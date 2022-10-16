@@ -7,28 +7,19 @@ env:
   BUILD_TYPE: Release
 
 jobs:
-  build-ubuntu-2004:
-    # The CMake configure and build commands are platform agnostic and should work equally
-    # well on Windows or Mac.  You can convert this to a matrix build if you need
-    # cross-platform coverage.
-    # See: https://docs.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow#configuring-a-build-matrix
-    runs-on: ubuntu-20.04
-
+  build-ubuntu:
+    strategy:
+      matrix:
+        os: [ubuntu-22.04, ubuntu-20.04, ubuntu-18.04]
+    runs-on: ${{matrix.os}}
     steps:
     - name: Check Plugin sources
       uses: actions/checkout@v2
       with:
         repository: dougg3/obs-ios-camera-source
 
-    - name: Check OBS sources
-      uses: actions/checkout@v2
-      with:
-        repository: obsproject/obs-studio
-        ref: 27.2.1
-        path: obs-studio
-
     - name: Install build dependencies
-      run: sudo apt-get update && sudo apt-get install libobs-dev libavcodec-dev libssl-dev
+      run: sudo add-apt-repository -y ppa:obsproject/obs-studio && sudo apt-get install ffmpeg obs-studio libavcodec-dev libssl-dev pkg-config
 
     - name: Create Build Environment
       # Some projects don't allow in-source building, so create a separate build directory
@@ -43,7 +34,7 @@ jobs:
       # Note the current convention is to use the -S and -B options here to specify source 
       # and build directories, but this is only available with CMake 3.13 and higher.  
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: cmake ${{runner.workspace}}/obs-ios-camera-source -DLIBOBS_INCLUDE_DIR=${{runner.workspace}}/obs-ios-camera-source/obs-studio/cmake
+      run: cmake ${{runner.workspace}}/obs-ios-camera-source
 
     - name: Build
       working-directory: ${{runner.workspace}}/build
@@ -61,63 +52,5 @@ jobs:
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: plugin-ubuntu-20.04
-        path: ${{runner.workspace}}/package
-
-  build-ubuntu-1804:
-    # The CMake configure and build commands are platform agnostic and should work equally
-    # well on Windows or Mac.  You can convert this to a matrix build if you need
-    # cross-platform coverage.
-    # See: https://docs.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow#configuring-a-build-matrix
-    runs-on: ubuntu-18.04
-
-    steps:
-    - name: Check Plugin sources
-      uses: actions/checkout@v2
-      with:
-        repository: dougg3/obs-ios-camera-source
-
-    - name: Check OBS sources
-      uses: actions/checkout@v2
-      with:
-        repository: obsproject/obs-studio
-        ref: 27.2.1
-        path: obs-studio
-
-    - name: Install build dependencies
-      # Note: 18.04 has an older libobs-dev, so we need to actually install the full upstream OBS instead in order to meet dependencies.
-      run: sudo add-apt-repository ppa:obsproject/obs-studio -y && sudo apt-get update && sudo apt-get install ffmpeg obs-studio libavcodec-dev libssl-dev
-
-    - name: Create Build Environment
-      # Some projects don't allow in-source building, so create a separate build directory
-      # We'll use this as our working directory for all subsequent commands
-      run: cmake -E make_directory ${{runner.workspace}}/build
-
-    - name: Configure CMake
-      # Use a bash shell so we can use the same syntax for environment variable
-      # access regardless of the host operating system
-      shell: bash
-      working-directory: ${{runner.workspace}}/build
-      # Note the current convention is to use the -S and -B options here to specify source 
-      # and build directories, but this is only available with CMake 3.13 and higher.  
-      # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: cmake ${{runner.workspace}}/obs-ios-camera-source -DLIBOBS_INCLUDE_DIR=${{runner.workspace}}/obs-ios-camera-source/obs-studio/cmake
-
-    - name: Build
-      working-directory: ${{runner.workspace}}/build
-      shell: bash
-      # Execute the build.  You can specify a specific target with "--target <NAME>"
-      run: make -j$(nproc)
-    
-    - name: Prepare package
-      working-directory: ${{runner.workspace}}
-      shell: bash
-      run: mkdir -p package/.config/obs-studio/plugins/obs-ios-camera-source/{data/locale,bin/64bit} &&
-        cp build/obs-ios-camera-source.so package/.config/obs-studio/plugins/obs-ios-camera-source/bin/64bit &&
-        cp obs-ios-camera-source/data/locale/* package/.config/obs-studio/plugins/obs-ios-camera-source/data/locale
-
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: plugin-ubuntu-18.04
+        name: plugin-${{matrix.os}}
         path: ${{runner.workspace}}/package

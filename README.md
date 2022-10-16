@@ -45,5 +45,7 @@ These instructions are tested on Ubuntu 22.04, 20.04, and 18.04. For other distr
   - `cp ../data/locale/en-US.ini ~/.config/obs-studio/plugins/obs-ios-camera-source/data/locale/`
   - `cp obs-ios-camera-source.so ~/.config/obs-studio/plugins/obs-ios-camera-source/bin/64bit/`
 
+Note for Ubuntu 18.04 users: this plugin now requires a newer version of CMake than what was bundled originally. Either use the premade binaries, or [upgrade your CMake](https://apt.kitware.com/).
+
 ## Special thanks
 - [wtsnz](https://github.com/wtsnz) for creating an awesome plugin/app for using your iOS camera in OBS!

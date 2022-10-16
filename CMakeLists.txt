@@ -24,6 +24,7 @@ pkg_check_modules(LIBAV REQUIRED IMPORTED_TARGET
 	libavcodec
 	libavutil
 )
+target_link_libraries(obs-ios-camera-source PkgConfig::LIBAV)
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
 	set(ARCH 64)

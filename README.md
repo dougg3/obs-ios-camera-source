@@ -58,6 +58,9 @@ Note for Ubuntu 18.04 users: this plugin now requires a newer version of CMake t
 - Install prerequisites: `sudo pacman -S git make gcc cmake pkg-config`
 - Follow the same instructions as Ubuntu starting from "Download this plugin source code"
 
+> Note: Depending on how OBS is installed, **SteamOS** users may need to explicitly install `ffmpeg` in addition to the above mentioned prerequisites should they encounter compilation errors around missing `libavcodec`:
+> - `sudo pacman -S ffmpeg` 
+
 ### Other distros
 
 - As you can see from the different sections above, the instructions are pretty much the same on all distros. You basically just have to make sure you have FFmpeg, OpenSSL, and libobs development packages installed, along with git, pkg-config, cmake, make, and gcc. CMake should handle everything for you after all the prerequisites are installed.

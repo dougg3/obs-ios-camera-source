@@ -52,8 +52,12 @@ void ffmpeg_decode_free(struct ffmpeg_decode *decode)
 {
     if (decode->decoder)
     {
+#if LIBAVCODEC_VERSION_MAJOR < 61
         avcodec_close(decode->decoder);
         av_free(decode->decoder);
+#else
+        avcodec_free_context(&decode->decoder);
+#endif
     }
 
     if (decode->frame)
@@ -206,7 +210,11 @@ bool ffmpeg_decode_audio(struct ffmpeg_decode *decode,
     audio->samples_per_sec = decode->frame->sample_rate;
     audio->format = convert_sample_format(decode->frame->format);
     audio->speakers =
+#if LIBAVCODEC_VERSION_MAJOR < 61
     convert_speaker_layout((uint8_t)decode->decoder->channels);
+#else
+    convert_speaker_layout((uint8_t)decode->decoder->ch_layout.nb_channels);
+#endif
 
     audio->frames = decode->frame->nb_samples;
 

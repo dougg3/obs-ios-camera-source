@@ -39,7 +39,11 @@ extern "C" {
 struct ffmpeg_decode
 {
 	AVCodecContext *decoder;
+#if LIBAVCODEC_VERSION_MAJOR < 59
 	AVCodec *codec;
+#else
+	const AVCodec *codec;
+#endif
 
 	AVFrame *frame;
 

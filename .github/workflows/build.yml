@@ -10,7 +10,7 @@ jobs:
   build-ubuntu:
     strategy:
       matrix:
-        os: [ubuntu-24.04, ubuntu-22.04, ubuntu-20.04]
+        os: [ubuntu-24.04, ubuntu-22.04]
     runs-on: ${{matrix.os}}
     steps:
     - name: Check Plugin sources
@@ -50,7 +50,8 @@ jobs:
         cp obs-ios-camera-source/data/locale/* package/.config/obs-studio/plugins/obs-ios-camera-source/data/locale
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: plugin-${{matrix.os}}
         path: ${{runner.workspace}}/package
+        include-hidden-files: true
